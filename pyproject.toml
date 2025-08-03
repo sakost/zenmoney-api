@@ -49,6 +49,8 @@ dev = [
     "types-authlib>=1.6.0.20250711",
 ]
 
+[tool.bandit.assert_used]
+skip = ["*_test.py", "*/test_*.py"]
 
 [tool.isort]
 profile = "black"
