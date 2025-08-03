@@ -7,12 +7,12 @@ import pytest
 from authlib.oauth2.rfc6749 import OAuth2Token
 
 from zenmoney_api.auth import AsyncZenMoneyOAuth2Client
-from zenmoney_api.client import ZenMoneyClient
+from zenmoney_api.client import AsyncZenMoneyClient
 from zenmoney_api.models import DiffObject, Transaction
 
 
 class TestZenMoneyClient:
-    """Test ZenMoneyClient."""
+    """Test AsyncZenMoneyClient."""
 
     def test_init(self) -> None:
         """Test client initialization."""
@@ -21,7 +21,7 @@ class TestZenMoneyClient:
             client_secret="test_client_secret",
             redirect_uri="http://localhost/callback",
         )
-        client = ZenMoneyClient(auth_client)
+        client = AsyncZenMoneyClient(auth_client)
 
         assert client._client == auth_client
         assert client._BASE == "https://api.zenmoney.ru/v8"
@@ -30,14 +30,14 @@ class TestZenMoneyClient:
         """Test creating client with existing token."""
         token = OAuth2Token(sample_token)
 
-        client = ZenMoneyClient.create_with_token(
+        client = AsyncZenMoneyClient.create_with_token(
             client_id="test_client_id",
             client_secret="test_client_secret",
             redirect_uri="http://localhost/callback",
             token=token,
         )
 
-        assert isinstance(client, ZenMoneyClient)
+        assert isinstance(client, AsyncZenMoneyClient)
         assert isinstance(client._client, AsyncZenMoneyOAuth2Client)
         assert client._client.client_id == "test_client_id"
         assert client._client.client_secret == "test_client_secret"
@@ -46,13 +46,13 @@ class TestZenMoneyClient:
 
     def test_create_with_token_without_token(self) -> None:
         """Test creating client without token."""
-        client = ZenMoneyClient.create_with_token(
+        client = AsyncZenMoneyClient.create_with_token(
             client_id="test_client_id",
             client_secret="test_client_secret",
             redirect_uri="http://localhost/callback",
         )
 
-        assert isinstance(client, ZenMoneyClient)
+        assert isinstance(client, AsyncZenMoneyClient)
         assert isinstance(client._client, AsyncZenMoneyOAuth2Client)
         assert client._client.client_id == "test_client_id"
         assert client._client.client_secret == "test_client_secret"
@@ -74,7 +74,7 @@ class TestZenMoneyClient:
         mock_response.raise_for_status.return_value = None
         mock_auth_client.post.return_value = mock_response
 
-        client = ZenMoneyClient(mock_auth_client)
+        client = AsyncZenMoneyClient(mock_auth_client)
         result = await client.get_diff()
 
         # Verify the request was made correctly
@@ -114,7 +114,7 @@ class TestZenMoneyClient:
         mock_response.raise_for_status.return_value = None
         mock_auth_client.post.return_value = mock_response
 
-        client = ZenMoneyClient(mock_auth_client)
+        client = AsyncZenMoneyClient(mock_auth_client)
 
         payload = DiffObject.model_construct(
             current_client_timestamp=int(datetime.now().timestamp()),
@@ -164,7 +164,7 @@ class TestZenMoneyClient:
         mock_response.raise_for_status.return_value = None
         mock_auth_client.post.return_value = mock_response
 
-        client = ZenMoneyClient(mock_auth_client)
+        client = AsyncZenMoneyClient(mock_auth_client)
 
         result = await client.get_diff(None)
 
@@ -205,7 +205,7 @@ class TestZenMoneyClient:
         mock_response.raise_for_status.return_value = None
         mock_auth_client.post.return_value = mock_response
 
-        client = ZenMoneyClient(mock_auth_client)
+        client = AsyncZenMoneyClient(mock_auth_client)
 
         transaction: dict[str, object] = {"payee": "McDonalds"}
 
@@ -237,7 +237,7 @@ class TestZenMoneyClient:
         mock_response.raise_for_status.return_value = None
         mock_auth_client.post.return_value = mock_response
 
-        client = ZenMoneyClient(mock_auth_client)
+        client = AsyncZenMoneyClient(mock_auth_client)
 
         transactions: list[dict[str, object]] = [
             {"payee": "McDonalds"},
@@ -266,7 +266,7 @@ class TestZenMoneyClient:
         mock_response.raise_for_status.side_effect = Exception("HTTP Error")
         mock_auth_client.post.return_value = mock_response
 
-        client = ZenMoneyClient(mock_auth_client)
+        client = AsyncZenMoneyClient(mock_auth_client)
 
         with pytest.raises(Exception, match="HTTP Error"):
             await client.get_diff()
@@ -280,7 +280,7 @@ class TestZenMoneyClient:
         mock_response.raise_for_status.side_effect = Exception("HTTP Error")
         mock_auth_client.post.return_value = mock_response
 
-        client = ZenMoneyClient(mock_auth_client)
+        client = AsyncZenMoneyClient(mock_auth_client)
 
         transaction: dict[str, object] = {"payee": "McDonalds"}
 

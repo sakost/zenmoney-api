@@ -1,4 +1,9 @@
 # ZenMoney API Client
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
+[![Checked with mypy](https://www.mypy-lang.org/static/mypy_badge.svg)](https://mypy-lang.org/)
+[![GitHub License](https://img.shields.io/github/license/sakost/zenmoney-api)](LICENSE)
+[![PyPI version](https://img.shields.io/pypi/v/zenmoney-api)](https://pypi.org/p/zenmoney-api)
+<!-- [![PyPI downloads](https://img.shields.io/pypi/dd/zenmoney-api)](https://pypi.org/p/zenmoney-api) -->
 
 A Python client for the ZenMoney API with proper OAuth2 authentication support.
 
