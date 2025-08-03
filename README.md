@@ -42,7 +42,7 @@ client = asyncio.run(get_authorization_url())
 
 ```python
 import asyncio
-from zenmoney_api.client import ZenMoneyClient
+from zenmoney_api.auth import AsyncZenMoneyOAuth2Client
 
 async def exchange_code_for_token():
     # Use the client from step 1
@@ -54,7 +54,7 @@ async def exchange_code_for_token():
 
     # Exchange authorization code for access token
     code = "authorization_code_from_callback"
-    token = await client.fetch_token_with_code(code)
+    token = await client.fetch_token(code=code)
 
     print(f"Access Token: {token['access_token']}")
     print(f"Refresh Token: {token['refresh_token']}")
@@ -117,7 +117,7 @@ async def complete_oauth2_flow():
     code = "authorization_code_from_callback"
 
     # Exchange code for token
-    token = await auth_client.fetch_token_with_code(code)
+    token = await auth_client.fetch_token(code=code)
 
     # Step 3: Create API client with token
     api_client = ZenMoneyClient(auth_client)
@@ -149,7 +149,7 @@ async def refresh_token():
     )
 
     # Refresh token
-    new_token = await client.refresh_access_token("your_refresh_token")
+    new_token = await client.refresh_token()
     print(f"New access token: {new_token['access_token']}")
 
 # Run the function
@@ -225,23 +225,36 @@ git clone https://github.com/your-username/zenmoney-api.git
 cd zenmoney-api
 
 # Install dependencies
-pip install -e ".[dev]"
+uv sync --all-groups
 ```
 
 ### Running Tests
 
 ```bash
 # Run all tests
-pytest
+uv run pytest
 
 # Run with coverage
-pytest --cov=src/zenmoney_api
+uv run pytest --cov=src/zenmoney_api
 
-# Run linting
-ruff check src/
+# Run ruff linting
+uv run ruff check src/
+
+# Run pylint linting
+uv run pylint src/
 
 # Run type checking
-mypy src/
+uv run mypy src/
+```
+
+Also you can run all them just by running pre-commit tool:
+```bash
+uv run pre-commit --all-files
+```
+
+You can install pre-commit hooks to run on every commit:
+```bash
+uv run pre-commit install
 ```
 
 ## License
