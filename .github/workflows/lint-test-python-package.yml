@@ -21,6 +21,14 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - uses: dorny/paths-filter@v3
+      id: changes
+      with:
+        filters: |
+          src:
+            - 'src/**'
+          tests:
+            - 'tests/**'
     - name: Install uv and set the python version
       uses: astral-sh/setup-uv@v6
       with:
@@ -30,9 +38,11 @@ jobs:
     - name: Install the project
       run: uv sync --locked --all-extras --dev
     - name: Lint with mypy, pylint, ruff
+      if: ${{ steps.changes.outputs.src == 'true' }}
       run: |
-        uv run pre-commit run --all-files
+        uv run pre-commit run --files ${{ steps.changes.outputs.src }}
     - name: Test with pytest
+      if: ${{ steps.changes.outputs.tests == 'true' }}
       run: |
         uv run pytest --junitxml=junit/test-results-${{ matrix.python-version }}.xml
     - name: Upload pytest test results
