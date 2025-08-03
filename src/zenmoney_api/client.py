@@ -1,17 +1,17 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any, cast
+from typing import Any, Self, cast
 
 from authlib.oauth2.rfc6749 import OAuth2Token
 
 from zenmoney_api.auth import AsyncZenMoneyOAuth2Client
 from zenmoney_api.models import DiffObject
 
-__all__ = ["ZenMoneyClient"]
+__all__ = ["AsyncZenMoneyClient"]
 
 
-class ZenMoneyClient:
+class AsyncZenMoneyClient:
     _BASE = "https://api.zenmoney.ru/v8"
 
     def __init__(self, auth_client: AsyncZenMoneyOAuth2Client) -> None:
@@ -26,7 +26,7 @@ class ZenMoneyClient:
         redirect_uri: str | None = None,
         token: OAuth2Token | None = None,
         **extra: Any,
-    ) -> ZenMoneyClient:
+    ) -> Self:
         """
         Create a ZenMoney client with an existing token
 

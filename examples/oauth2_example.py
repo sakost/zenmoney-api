@@ -18,7 +18,7 @@ import asyncio
 import os
 
 from zenmoney_api.auth import AsyncZenMoneyOAuth2Client
-from zenmoney_api.client import ZenMoneyClient
+from zenmoney_api.client import AsyncZenMoneyClient
 
 
 async def demonstrate_oauth2_flow() -> None:
@@ -73,7 +73,7 @@ async def demonstrate_oauth2_flow() -> None:
         print()
 
         print("Step 3: Using the API with the access token...")
-        api_client = ZenMoneyClient(auth_client)
+        api_client = AsyncZenMoneyClient(auth_client)
 
         print("Fetching data from ZenMoney API...")
         diff_data = await api_client.get_diff()

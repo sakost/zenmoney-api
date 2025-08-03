@@ -9,6 +9,10 @@
 name: Upload Python Package
 
 on:
+  workflow_run:
+    workflows: ["CI"]
+    branches: [ "master" ]
+    types: [completed]
   release:
     types: [published]
 
