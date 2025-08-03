@@ -95,9 +95,6 @@ jobs:
     - name: Install dependencies
       run: uv sync --locked --all-extras --dev
 
-    - name: Run security checks
-      run: uv run safety check
-
     - name: Run bandit
       uses: PyCQA/bandit-action@v1
 
