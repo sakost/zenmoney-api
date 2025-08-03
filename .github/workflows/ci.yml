@@ -78,6 +78,11 @@ jobs:
 
   security:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+      security-events: write
+
     steps:
     - uses: actions/checkout@v4
 
@@ -91,9 +96,10 @@ jobs:
       run: uv sync --locked --all-extras --dev
 
     - name: Run security checks
-      run: |
-        uv run safety check
-        uv run bandit -r src/ -f json -o bandit-report.json || true
+      run: uv run safety check
+
+    - name: Run bandit
+      uses: PyCQA/bandit-action@v1
 
     - name: Upload security report
       uses: actions/upload-artifact@v4
