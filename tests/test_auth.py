@@ -56,6 +56,102 @@ class TestAsyncZenMoneyOAuth2Client:
         assert "scope=read" in auth_url
         assert "state=custom_state" in auth_url
 
+    def test_authorization_url_state_management(self) -> None:
+        """Test that authorization_url properly sets the _state attribute."""
+        client = AsyncZenMoneyOAuth2Client(
+            client_id="test_client_id",
+            client_secret="test_client_secret",
+            redirect_uri="http://localhost/callback",
+        )
+
+        # Initial state should not be a string (it's ClientState.UNOPENED)
+        assert not isinstance(client._state, str)
+
+        # Call authorization_url
+        client.authorization_url()
+
+        # State should be set to a string after calling authorization_url
+        assert client._state is not None
+        assert isinstance(client._state, str)  # type: ignore[unreachable]
+        assert len(client._state) > 0
+
+    def test_authorization_url_with_custom_response_type(self) -> None:
+        """Test authorization URL with custom response_type."""
+        client = AsyncZenMoneyOAuth2Client(
+            client_id="test_client_id",
+            client_secret="test_client_secret",
+            redirect_uri="http://localhost/callback",
+        )
+
+        auth_url = client.authorization_url(response_type="token")
+        assert "response_type=token" in auth_url
+
+    def test_authorization_url_with_multiple_params(self) -> None:
+        """Test authorization URL with multiple custom parameters."""
+        client = AsyncZenMoneyOAuth2Client(
+            client_id="test_client_id",
+            client_secret="test_client_secret",
+            redirect_uri="http://localhost/callback",
+        )
+
+        auth_url = client.authorization_url(
+            response_type="code",
+            scope="read write",
+            state="test_state_123",
+            prompt="consent",
+        )
+        assert "response_type=code" in auth_url
+        assert "scope=read+write" in auth_url or "scope=read%20write" in auth_url
+        assert "state=test_state_123" in auth_url
+        assert "prompt=consent" in auth_url
+
+    def test_authorization_url_mocked_create_authorization_url(
+        self, mocker: MockerFixture
+    ) -> None:
+        """Test authorization_url with mocked create_authorization_url method."""
+        client = AsyncZenMoneyOAuth2Client(
+            client_id="test_client_id",
+            client_secret="test_client_secret",
+            redirect_uri="http://localhost/callback",
+        )
+
+        # Mock the create_authorization_url method
+        mock_create_url = mocker.patch.object(client, "create_authorization_url")
+        mock_create_url.return_value = ("https://test.url", "test_state_123")
+
+        # Call authorization_url
+        result = client.authorization_url(response_type="code", scope="read")
+
+        # Verify create_authorization_url was called with correct parameters
+        mock_create_url.assert_called_once_with(
+            "https://api.zenmoney.ru/oauth2/authorize/",
+            response_type="code",
+            scope="read",
+        )
+
+        # Verify the result
+        assert result == "https://test.url"
+
+        # Verify state was set
+        assert client._state == "test_state_123"
+
+    def test_authorization_url_preserves_existing_state(self) -> None:
+        """Test that authorization_url preserves existing state if provided."""
+        client = AsyncZenMoneyOAuth2Client(
+            client_id="test_client_id",
+            client_secret="test_client_secret",
+            redirect_uri="http://localhost/callback",
+        )
+
+        # Set initial state
+        client._state = "existing_state"
+
+        # Call authorization_url with custom state
+        client.authorization_url(state="new_state")
+
+        # State should be updated to the new state
+        assert client._state == "new_state"
+
     @pytest.mark.asyncio
     async def test_fetch_token_with_code(
         self, mocker: MockerFixture, sample_token: dict[str, object]
@@ -134,6 +230,120 @@ class TestZenMoneyOAuth2Client:
         assert "response_type=code" in auth_url
         assert "client_id=test_client_id" in auth_url
         assert "redirect_uri=" in auth_url
+
+    def test_authorization_url_with_custom_params(self) -> None:
+        """Test authorization URL generation with custom parameters."""
+        client = ZenMoneyOAuth2Client(
+            client_id="test_client_id",
+            client_secret="test_client_secret",
+            redirect_uri="http://localhost/callback",
+        )
+
+        auth_url = client.authorization_url(
+            response_type="code",
+            scope="read",
+            state="custom_state",
+        )
+        assert "api.zenmoney.ru/oauth2/authorize/" in auth_url
+        assert "response_type=code" in auth_url
+        assert "scope=read" in auth_url
+        assert "state=custom_state" in auth_url
+
+    def test_authorization_url_state_management(self) -> None:
+        """Test that authorization_url properly sets the _state attribute."""
+        client = ZenMoneyOAuth2Client(
+            client_id="test_client_id",
+            client_secret="test_client_secret",
+            redirect_uri="http://localhost/callback",
+        )
+
+        # Initial state should not be a string (it's ClientState.UNOPENED)
+        assert not isinstance(client._state, str)
+
+        # Call authorization_url
+        client.authorization_url()
+
+        # State should be set to a string after calling authorization_url
+        assert client._state is not None
+        assert isinstance(client._state, str)  # type: ignore[unreachable]
+        assert len(client._state) > 0
+
+    def test_authorization_url_with_custom_response_type(self) -> None:
+        """Test authorization URL with custom response_type."""
+        client = ZenMoneyOAuth2Client(
+            client_id="test_client_id",
+            client_secret="test_client_secret",
+            redirect_uri="http://localhost/callback",
+        )
+
+        auth_url = client.authorization_url(response_type="token")
+        assert "response_type=token" in auth_url
+
+    def test_authorization_url_with_multiple_params(self) -> None:
+        """Test authorization URL with multiple custom parameters."""
+        client = ZenMoneyOAuth2Client(
+            client_id="test_client_id",
+            client_secret="test_client_secret",
+            redirect_uri="http://localhost/callback",
+        )
+
+        auth_url = client.authorization_url(
+            response_type="code",
+            scope="read write",
+            state="test_state_123",
+            prompt="consent",
+        )
+        assert "response_type=code" in auth_url
+        assert "scope=read+write" in auth_url or "scope=read%20write" in auth_url
+        assert "state=test_state_123" in auth_url
+        assert "prompt=consent" in auth_url
+
+    def test_authorization_url_mocked_create_authorization_url(
+        self, mocker: MockerFixture
+    ) -> None:
+        """Test authorization_url with mocked create_authorization_url method."""
+        client = ZenMoneyOAuth2Client(
+            client_id="test_client_id",
+            client_secret="test_client_secret",
+            redirect_uri="http://localhost/callback",
+        )
+
+        # Mock the create_authorization_url method
+        mock_create_url = mocker.patch.object(client, "create_authorization_url")
+        mock_create_url.return_value = ("https://test.url", "test_state_123")
+
+        # Call authorization_url
+        result = client.authorization_url(response_type="code", scope="read")
+
+        # Verify create_authorization_url was called with correct parameters
+        mock_create_url.assert_called_once_with(
+            "https://api.zenmoney.ru/oauth2/authorize/",
+            response_type="code",
+            scope="read",
+        )
+
+        # Verify the result
+        assert result == "https://test.url"
+
+        # Verify state was set
+        assert client._state == "test_state_123"
+
+    def test_authorization_url_preserves_existing_state(self) -> None:
+        """Test that authorization_url preserves existing state if provided."""
+        client = ZenMoneyOAuth2Client(
+            client_id="test_client_id",
+            client_secret="test_client_secret",
+            redirect_uri="http://localhost/callback",
+        )
+
+        # Set initial state
+        client._state = "existing_state"
+
+        # Call authorization_url with custom state
+        client.authorization_url(state="new_state")
+
+        # State should be updated to the new state
+        assert client._state == "new_state"
 
     def test_fetch_token_with_code(
         self, mocker: MockerFixture, sample_token: dict[str, object]
