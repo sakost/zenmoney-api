@@ -17,20 +17,28 @@ repos:
       - id: mixed-line-ending
       - id: end-of-file-fixer
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.4.4
+    rev: v0.12.7
     hooks:
       - id: ruff-format
       - id: ruff-check
         args: ["--fix"]
 
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.10.0
+  - repo: local
     hooks:
       - id: mypy
-        args: ["--config-file=pyproject.toml", "src", "tests"]
+        name: mypy
+        entry: uv run mypy --config-file=pyproject.toml
+        language: system
+        types: [python]
+        require_serial: true
 
-  - repo: https://github.com/pre-commit/mirrors-pylint
-    rev: v3.2.2
+  - repo: local
     hooks:
       - id: pylint
-        args: ["--rcfile=pyproject.toml", "src", "tests"]
+        name: pylint
+        entry: uv run pylint --rcfile=pyproject.toml src
+        language: system
+        types: [python]
+        files: ^src/
+        exclude: ^tests/
+        require_serial: true

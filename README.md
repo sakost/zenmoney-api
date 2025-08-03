@@ -27,11 +27,11 @@ async def get_authorization_url():
         client_secret="your_client_secret",
         redirect_uri="http://your-app.com/callback"
     )
-    
+
     # Generate authorization URL
     auth_url = client.authorization_url()
     print(f"Authorization URL: {auth_url}")
-    
+
     return client
 
 # Run the function
@@ -51,14 +51,14 @@ async def exchange_code_for_token():
         client_secret="your_client_secret",
         redirect_uri="http://your-app.com/callback"
     )
-    
+
     # Exchange authorization code for access token
     code = "authorization_code_from_callback"
     token = await client.fetch_token_with_code(code)
-    
+
     print(f"Access Token: {token['access_token']}")
     print(f"Refresh Token: {token['refresh_token']}")
-    
+
     return token
 
 # Run the function
@@ -78,11 +78,11 @@ async def use_api():
         client_secret="your_client_secret",
         token=token  # from step 2
     )
-    
+
     # Get data from ZenMoney API
     diff_data = await client.get_diff()
     print(f"Diff data: {diff_data}")
-    
+
     # Get suggestions for transaction
     suggestion = await client.suggest({"payee": "McDonalds"})
     print(f"Suggestion: {suggestion}")
@@ -107,25 +107,25 @@ async def complete_oauth2_flow():
         client_secret="your_client_secret",
         redirect_uri="http://your-app.com/callback"
     )
-    
+
     # Generate authorization URL
     auth_url = auth_client.authorization_url()
     print(f"Please visit: {auth_url}")
-    
+
     # Step 2: After user authorizes, you'll get the code in your callback
     # This is just an example - in real app, you'd get this from your web server
     code = "authorization_code_from_callback"
-    
+
     # Exchange code for token
     token = await auth_client.fetch_token_with_code(code)
-    
+
     # Step 3: Create API client with token
     api_client = ZenMoneyClient(auth_client)
-    
+
     # Use the API
     diff_data = await api_client.get_diff()
     print(f"Diff data: {diff_data}")
-    
+
     # Get suggestions
     suggestion = await api_client.suggest({"payee": "McDonalds"})
     print(f"Suggestion: {suggestion}")
@@ -147,7 +147,7 @@ async def refresh_token():
         client_id="your_client_id",
         client_secret="your_client_secret"
     )
-    
+
     # Refresh token
     new_token = await client.refresh_access_token("your_refresh_token")
     print(f"New access token: {new_token['access_token']}")

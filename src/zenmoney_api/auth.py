@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-from typing import Any, Literal, Protocol, TypedDict, cast
+from typing import Any, Protocol, TypedDict
 
 from authlib.integrations.httpx_client import AsyncOAuth2Client, OAuth2Client
-from authlib.oauth2.rfc6749 import OAuth2Token
 
 
 class TokenRequestParams(TypedDict):

@@ -1,1 +1,1 @@
-# Tests package for zenmoney-api 
+# Tests package for zenmoney-api
